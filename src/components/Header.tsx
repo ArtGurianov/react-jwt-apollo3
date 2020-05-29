@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
-import { setAccessToken } from "../tokenStore";
 
 const Header: React.FC<RouteComponentProps> = ({ history }) => {
   const { data, loading } = useMeQuery();
@@ -36,7 +35,7 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
           <button
             onClick={async () => {
               await logout();
-              setAccessToken("");
+              localStorage.removeItem("accessToken");
               await client!.resetStore();
               history.push("/login");
             }}

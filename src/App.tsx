@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Routes } from "./Routes";
-import { setAccessToken } from "./tokenStore";
 
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -10,7 +9,7 @@ export const App: React.FC = () => {
       credentials: "include",
     }).then(async (x) => {
       const { accessToken } = await x.json();
-      setAccessToken(accessToken);
+      localStorage.setItem("accessToken", accessToken);
       setLoading(false);
     });
   }, []);

@@ -12,7 +12,6 @@ import jwtDecode from "jwt-decode";
 import React from "react";
 import ReactDOM from "react-dom";
 import { App } from "./App";
-import { getAccessToken, setAccessToken } from "./tokenStore";
 
 const httpLink = new HttpLink({
   uri: "http://localhost:3000/graphql",
@@ -37,7 +36,7 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
 });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
-  const accessToken = getAccessToken();
+  const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
     operation.setContext({
       headers: {
@@ -52,7 +51,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 const refreshLink = new TokenRefreshLink({
   accessTokenField: "accessToken",
   isTokenValidOrUndefined: () => {
-    const token = getAccessToken();
+    const token = localStorage.getItem("accessToken");
     if (!token) {
       return true;
     }
@@ -74,7 +73,7 @@ const refreshLink = new TokenRefreshLink({
     });
   },
   handleFetch: (accessToken) => {
-    setAccessToken(accessToken);
+    localStorage.setItem("accessToken", accessToken);
   },
   // handleResponse: (operation, accessTokenField) => (response) => {
   //   // here you can parse response, handle errors, prepare returned token to
