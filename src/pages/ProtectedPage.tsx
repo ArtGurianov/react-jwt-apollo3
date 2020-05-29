@@ -1,7 +1,7 @@
 import React from "react";
 import { useProtectedQuery } from "../generated/graphql";
 
-export const Protected: React.FC = () => {
+export const ProtectedPage: React.FC = () => {
   const { loading, data, error } = useProtectedQuery({
     fetchPolicy: "network-only",
   });

@@ -1,9 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { setAccessToken } from "../accessToken";
+import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
+import { setAccessToken } from "../tokenStore";
 
-export const Header: React.FC = () => {
+const Header: React.FC<RouteComponentProps> = ({ history }) => {
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
 
@@ -38,6 +38,7 @@ export const Header: React.FC = () => {
               await logout();
               setAccessToken("");
               await client!.resetStore();
+              history.push("/login");
             }}
           >
             logout
@@ -48,3 +49,5 @@ export const Header: React.FC = () => {
     </header>
   );
 };
+
+export default withRouter(Header);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { setAccessToken } from "../accessToken";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
+import { setAccessToken } from "../tokenStore";
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");

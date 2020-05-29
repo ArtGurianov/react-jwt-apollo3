@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { Header } from "./pages/Header";
+import Header from "./components/Header";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
-import { Protected } from "./pages/Protected";
+import { ProtectedPage } from "./pages/ProtectedPage";
 import { Register } from "./pages/Register";
 
 export const Routes: React.FC = () => {
@@ -15,7 +15,7 @@ export const Routes: React.FC = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Register} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/protected" component={Protected} />
+          <Route exact path="/protected" component={ProtectedPage} />
         </Switch>
       </div>
     </BrowserRouter>

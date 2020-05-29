@@ -11,8 +11,8 @@ import { TokenRefreshLink } from "apollo-link-token-refresh";
 import jwtDecode from "jwt-decode";
 import React from "react";
 import ReactDOM from "react-dom";
-import { getAccessToken, setAccessToken } from "./accessToken";
 import { App } from "./App";
+import { getAccessToken, setAccessToken } from "./tokenStore";
 
 const httpLink = new HttpLink({
   uri: "http://localhost:3000/graphql",
