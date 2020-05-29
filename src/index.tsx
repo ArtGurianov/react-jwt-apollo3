@@ -58,6 +58,7 @@ const refreshLink = new TokenRefreshLink({
     try {
       const { exp } = jwtDecode(token);
       if (Date.now() >= exp * 1000) {
+        localStorage.removeItem("accessToken");
         return false;
       } else {
         return true;
