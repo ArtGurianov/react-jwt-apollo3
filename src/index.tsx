@@ -19,7 +19,7 @@ const httpLink = new HttpLink({
   credentials: "include",
 });
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({ graphQLErrors, networkError, response }) => {
   if (graphQLErrors)
     graphQLErrors.map(({ message, locations, path }) =>
       console.log(
@@ -28,6 +28,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
     );
 
   if (networkError) console.log(`[Network error]: ${networkError}`);
+
+  //DISABLING NASTY ERRORS//
+  if (response && response.errors) {
+    console.log(response.errors);
+    response.errors = undefined;
+  }
 });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
