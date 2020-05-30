@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+import { authContext } from "../App";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
 const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
+  const { setIsLoggedIn } = useContext(authContext);
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
 
@@ -28,10 +30,11 @@ const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
         {!loading && data && data.me && (
           <button
             onClick={async () => {
-              history.push("/login");
               await logout();
               localStorage.removeItem("accessToken");
               await client!.resetStore();
+              setIsLoggedIn(false);
+              history.push("/login");
             }}
           >
             logout

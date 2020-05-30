@@ -1,9 +1,11 @@
 import { ApolloError } from "@apollo/client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
+import { authContext } from "../App";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+  const { setIsLoggedIn } = useContext(authContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login] = useLoginMutation({
@@ -31,8 +33,9 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
 
         if (response && response.data) {
           localStorage.setItem("accessToken", response.data.login.accessToken);
+          setIsLoggedIn(true);
+          history.push("/");
         }
-        history.push("/");
       }}
     >
       <div>
