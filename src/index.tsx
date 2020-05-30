@@ -101,6 +101,7 @@ const client = new ApolloClient({
     concat(errorLink, concat(authMiddleware, httpLink))
   ),
 });
+
 ReactDOM.render(
   <ApolloProvider client={client}>
     <App />

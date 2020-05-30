@@ -4,7 +4,7 @@ import { authContext } from "../App";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
 const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
-  const { setIsLoggedIn } = useContext(authContext);
+  const { setAuth } = useContext(authContext);
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
 
@@ -33,7 +33,7 @@ const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
               await logout();
               localStorage.removeItem("accessToken");
               await client!.resetStore();
-              setIsLoggedIn(false);
+              setAuth((prevState) => ({ ...prevState, isLoggedIn: false }));
               history.push("/login");
             }}
           >
