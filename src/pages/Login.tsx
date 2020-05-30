@@ -1,10 +1,10 @@
 import { ApolloError } from "@apollo/client";
+import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import { authContext } from "../App";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 
-const Login: React.FC<RouteComponentProps> = ({ history }) => {
+const Login: React.FC<RouteComponentProps> = () => {
   const { setAuth } = useContext(authContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +34,7 @@ const Login: React.FC<RouteComponentProps> = ({ history }) => {
         if (response && response.data) {
           localStorage.setItem("accessToken", response.data.login.accessToken);
           setAuth((prevState) => ({ ...prevState, isLoggedIn: true }));
-          history.push("/");
+          navigate("/");
         }
       }}
     >

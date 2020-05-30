@@ -1,8 +1,8 @@
+import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import { useRegisterMutation } from "../generated/graphql";
 
-const Register: React.FC<RouteComponentProps> = ({ history }) => {
+const Register: React.FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [register] = useRegisterMutation();
@@ -12,7 +12,7 @@ const Register: React.FC<RouteComponentProps> = ({ history }) => {
         e.preventDefault();
         const response = await register({ variables: { email, password } });
 
-        history.push("/");
+        navigate("/");
         console.log(response);
       }}
     >

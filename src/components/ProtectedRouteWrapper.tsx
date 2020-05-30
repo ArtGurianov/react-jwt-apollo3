@@ -1,23 +1,12 @@
+import { Redirect } from "@reach/router";
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
 
-const ProtectedRouteWrapper: React.FC = ({ children, ...rest }) => {
+const ProtectedRouteWrapper: React.FC = ({ children }) => {
+  const token = localStorage.getItem("accessToken");
   return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        localStorage.getItem("accessToken") ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
+    <>
+      {token && token.length ? { children } : <Redirect to="/login" noThrow />}
+    </>
   );
 };
 

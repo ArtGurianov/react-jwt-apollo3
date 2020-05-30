@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { useProtectedQuery } from "../generated/graphql";
 
@@ -5,7 +6,7 @@ import { useProtectedQuery } from "../generated/graphql";
 //WITHOUT onError. it just crashed and stopped
 //WITH onError. it keeps reloading
 //onError prevents throwing
-const ProtectedPage: React.FC = () => {
+const ProtectedPage: React.FC<RouteComponentProps> = () => {
   const { loading, data, error } = useProtectedQuery({
     fetchPolicy: "network-only",
     // onError: (e: ApolloError) => {

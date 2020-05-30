@@ -1,7 +1,7 @@
+import { Link, RouteComponentProps } from "@reach/router";
 import React from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 
-const PublicHeader: React.FC<RouteComponentProps> = ({ history }) => {
+const PublicHeader: React.FC<RouteComponentProps> = () => {
   return (
     <header>
       <div>
@@ -17,4 +17,4 @@ const PublicHeader: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(PublicHeader);
+export default PublicHeader;

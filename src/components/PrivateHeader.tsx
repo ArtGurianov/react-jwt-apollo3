@@ -1,9 +1,9 @@
+import { Link, navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext } from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { authContext } from "../App";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
-const PrivateHeader: React.FC<RouteComponentProps> = ({ history }) => {
+const PrivateHeader: React.FC<RouteComponentProps> = () => {
   const { setAuth } = useContext(authContext);
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
@@ -34,7 +34,7 @@ const PrivateHeader: React.FC<RouteComponentProps> = ({ history }) => {
               localStorage.removeItem("accessToken");
               await client!.resetStore();
               setAuth((prevState) => ({ ...prevState, isLoggedIn: false }));
-              history.push("/login");
+              navigate("/login");
             }}
           >
             logout
@@ -46,4 +46,4 @@ const PrivateHeader: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(PrivateHeader);
+export default PrivateHeader;
