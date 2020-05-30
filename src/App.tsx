@@ -7,14 +7,12 @@ import React, {
   useState,
 } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { Home } from "./pages/Home";
+import Home from "./pages/Home";
 
-const AppRoutes = React.lazy(() => import("./AppRoutes"));
-const ProtectedAppRoutes = React.lazy(() => import("./ProtectedAppRoutes"));
-const Header = React.lazy(() => import("./components/Header"));
-const ProtectedHeader = React.lazy(() =>
-  import("./components/ProtectedHeader")
-);
+const PublicAppRoutes = React.lazy(() => import("./PublicAppRoutes"));
+const PrivateAppRoutes = React.lazy(() => import("./PrivateAppRoutes"));
+const PublicHeader = React.lazy(() => import("./components/PublicHeader"));
+const PrivateHeader = React.lazy(() => import("./components/PrivateHeader"));
 
 export interface ContextInterface {
   auth: { isLoggedIn: boolean };
@@ -51,12 +49,12 @@ export const App: React.FC = () => {
     <authContext.Provider value={{ auth, setAuth }}>
       <BrowserRouter>
         <Suspense fallback={<div>loading header</div>}>
-          {auth.isLoggedIn ? <ProtectedHeader /> : <Header />}
+          {auth.isLoggedIn ? <PrivateHeader /> : <PublicHeader />}
         </Suspense>
         <Switch>
           <Route exact path="/" component={Home} />
           <Suspense fallback={<div>loading routes</div>}>
-            {auth.isLoggedIn ? <ProtectedAppRoutes /> : <AppRoutes />}
+            {auth.isLoggedIn ? <PrivateAppRoutes /> : <PublicAppRoutes />}
           </Suspense>
         </Switch>
       </BrowserRouter>

@@ -1,9 +1,9 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
-const AppRoutes: React.FC = () => {
+const PublicAppRoutes: React.FC = () => {
   return (
     <>
       <Route exact path="/register" component={Register} />
@@ -12,4 +12,4 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-export default AppRoutes;
+export default PublicAppRoutes;

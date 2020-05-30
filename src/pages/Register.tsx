@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { useRegisterMutation } from "../generated/graphql";
 
-export const Register: React.FC<RouteComponentProps> = ({ history }) => {
+const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [register] = useRegisterMutation();
@@ -38,3 +38,5 @@ export const Register: React.FC<RouteComponentProps> = ({ history }) => {
     </form>
   );
 };
+
+export default Register;

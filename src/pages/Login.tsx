@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { authContext } from "../App";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 
-export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const { setAuth } = useContext(authContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -60,3 +60,5 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
     </form>
   );
 };
+
+export default Login;

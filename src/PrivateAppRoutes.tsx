@@ -1,8 +1,8 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { ProtectedPage } from "./pages/ProtectedPage";
+import ProtectedPage from "./pages/ProtectedPage";
 
-const ProtectedAppRoutes: React.FC = () => {
+const PrivateAppRoutes: React.FC = () => {
   return (
     <>
       <Route exact path="/protected" component={ProtectedPage} />
@@ -10,4 +10,4 @@ const ProtectedAppRoutes: React.FC = () => {
   );
 };
 
-export default ProtectedAppRoutes;
+export default PrivateAppRoutes;

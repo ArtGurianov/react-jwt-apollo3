@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 
-const Header: React.FC<RouteComponentProps> = ({ history }) => {
+const PublicHeader: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <header>
       <div>
@@ -17,4 +17,4 @@ const Header: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(Header);
+export default withRouter(PublicHeader);

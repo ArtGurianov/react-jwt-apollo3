@@ -3,7 +3,7 @@ import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { authContext } from "../App";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
-const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
+const PrivateHeader: React.FC<RouteComponentProps> = ({ history }) => {
   const { setAuth } = useContext(authContext);
   const { data, loading } = useMeQuery();
   const [logout, { client }] = useLogoutMutation();
@@ -46,4 +46,4 @@ const ProtectedHeader: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(ProtectedHeader);
+export default withRouter(PrivateHeader);

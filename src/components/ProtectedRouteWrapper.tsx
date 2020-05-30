@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Route } from "react-router-dom";
 
-export const PrivateRoute: React.FC = ({ children, ...rest }) => {
+const ProtectedRouteWrapper: React.FC = ({ children, ...rest }) => {
   return (
     <Route
       {...rest}
@@ -20,3 +20,5 @@ export const PrivateRoute: React.FC = ({ children, ...rest }) => {
     />
   );
 };
+
+export default ProtectedRouteWrapper;

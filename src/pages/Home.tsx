@@ -1,7 +1,7 @@
 import React from "react";
 import { useUsersQuery } from "../generated/graphql";
 
-export const Home: React.FC = () => {
+const Home: React.FC = () => {
   const { data } = useUsersQuery({ fetchPolicy: "network-only" });
   if (!data) {
     return <div>loading...</div>;
@@ -21,3 +21,5 @@ export const Home: React.FC = () => {
     </div>
   );
 };
+
+export default Home;

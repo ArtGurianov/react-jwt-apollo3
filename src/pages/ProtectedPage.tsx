@@ -5,7 +5,7 @@ import { useProtectedQuery } from "../generated/graphql";
 //WITHOUT onError. it just crashed and stopped
 //WITH onError. it keeps reloading
 //onError prevents throwing
-export const ProtectedPage: React.FC = () => {
+const ProtectedPage: React.FC = () => {
   const { loading, data, error } = useProtectedQuery({
     fetchPolicy: "network-only",
     // onError: (e: ApolloError) => {
@@ -34,3 +34,5 @@ export const ProtectedPage: React.FC = () => {
     </div>
   );
 };
+
+export default ProtectedPage;
