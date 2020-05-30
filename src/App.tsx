@@ -53,14 +53,6 @@ export const App: React.FC = () => {
     return <div>loading...</div>;
   }
   return (
-    // <authContext.Provider value={{ auth, setAuth }}>
-    //   {auth.isLoggedIn ? <PrivateHeader /> : <PublicHeader />}
-    //   <Router>
-    //     <Home path="/" />
-    //     {auth.isLoggedIn ? <PrivateAppRoutes /> : <PublicAppRoutes />}
-    //   </Router>
-    // </authContext.Provider>
-
     <authContext.Provider value={{ auth, setAuth }}>
       {auth.isLoggedIn ? <PrivateHeader /> : <PublicHeader />}
       <Router>

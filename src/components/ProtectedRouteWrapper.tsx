@@ -1,13 +1,12 @@
 import { Redirect } from "@reach/router";
-import React from "react";
+import React, { useContext } from "react";
+import { authContext } from "../App";
 
 const ProtectedRouteWrapper: React.FC = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
-  return (
-    <>
-      {token && token.length ? { children } : <Redirect to="/login" noThrow />}
-    </>
-  );
+  const {
+    auth: { isLoggedIn },
+  } = useContext(authContext);
+  return <>{isLoggedIn ? { children } : <Redirect to="/login" noThrow />}</>;
 };
 
 export default ProtectedRouteWrapper;

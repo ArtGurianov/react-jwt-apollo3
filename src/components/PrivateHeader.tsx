@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { Link, navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext } from "react";
 import { authContext } from "../App";
@@ -6,7 +7,11 @@ import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 const PrivateHeader: React.FC<RouteComponentProps> = () => {
   const { setAuth } = useContext(authContext);
   const { data, loading } = useMeQuery();
-  const [logout, { client }] = useLogoutMutation();
+  const [logout, { client }] = useLogoutMutation({
+    onError: (e: ApolloError) => {
+      e.graphQLErrors.map((err) => console.log(err.message));
+    },
+  });
 
   let body: any = null; //from Ben if there is 3 or more states
 
@@ -32,7 +37,8 @@ const PrivateHeader: React.FC<RouteComponentProps> = () => {
             onClick={async () => {
               await logout();
               localStorage.removeItem("accessToken");
-              await client!.resetStore();
+              //await client!.resetStore(); CAUSES REFETCHING QUERIES
+              await client!.clearStore();
               setAuth((prevState) => ({ ...prevState, isLoggedIn: false }));
               navigate("/login");
             }}
