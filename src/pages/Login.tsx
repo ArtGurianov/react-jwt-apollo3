@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
@@ -5,7 +6,11 @@ import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login] = useLoginMutation();
+  const [login] = useLoginMutation({
+    onError: (e: ApolloError) => {
+      e.graphQLErrors.map((err) => console.log(err.message));
+    },
+  });
   return (
     <form
       onSubmit={async (e) => {

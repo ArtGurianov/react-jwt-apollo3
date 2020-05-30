@@ -29,10 +29,10 @@ const errorLink = onError(({ graphQLErrors, networkError, response }) => {
   if (networkError) console.log(`[Network error]: ${networkError}`);
 
   //DISABLING NASTY ERRORS//
-  if (response && response.errors) {
-    console.log(response.errors);
-    response.errors = undefined;
-  }
+  // if (response && response.errors) {
+  //   console.log(response.errors);
+  //   response.errors = undefined;
+  // }
 });
 
 const authMiddleware = new ApolloLink((operation, forward) => {
