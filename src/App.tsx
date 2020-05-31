@@ -9,16 +9,17 @@ import React, {
 import Home from "./pages/Home";
 import { createLazyRoute } from "./utils/createLazyRoute";
 
-const Register = createLazyRoute(React.lazy(() => import("./pages/Register")));
-const Login = createLazyRoute(React.lazy(() => import("./pages/Login")));
-const ProtectedPage = createLazyRoute(
-  React.lazy(() => import("./pages/ProtectedPage"))
-);
 const PublicHeader = createLazyRoute(
   React.lazy(() => import("./components/PublicHeader"))
 );
 const PrivateHeader = createLazyRoute(
   React.lazy(() => import("./components/PrivateHeader"))
+);
+const PrivateAppRoutes = createLazyRoute(
+  React.lazy(() => import("./PrivateAppRoutes"))
+);
+const PublicAppRoutes = createLazyRoute(
+  React.lazy(() => import("./PublicAppRoutes"))
 );
 
 export interface ContextInterface {
@@ -57,9 +58,11 @@ export const App: React.FC = () => {
       {auth.isLoggedIn ? <PrivateHeader /> : <PublicHeader />}
       <Router>
         <Home path="/" />
-        {auth.isLoggedIn && <ProtectedPage path="/protected" />}
-        {!auth.isLoggedIn && <Register path="/register" />}
-        {!auth.isLoggedIn && <Login path="/login" />}
+        {auth.isLoggedIn ? (
+          <PrivateAppRoutes path="/*" />
+        ) : (
+          <PublicAppRoutes path="/*" />
+        )}
       </Router>
     </authContext.Provider>
   );
