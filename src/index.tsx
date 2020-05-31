@@ -12,6 +12,7 @@ import jwtDecode from "jwt-decode";
 import React from "react";
 import ReactDOM from "react-dom";
 import { App } from "./App";
+import introspectionResult from "./generated/introspection";
 
 const httpLink = new HttpLink({
   uri: "http://localhost:3000/graphql",
@@ -94,7 +95,9 @@ const refreshLink = new TokenRefreshLink({
 });
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    possibleTypes: introspectionResult.possibleTypes,
+  }),
   credentials: "include",
   link: concat(
     refreshLink,

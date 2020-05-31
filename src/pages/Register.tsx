@@ -1,19 +1,30 @@
+import { ApolloError } from "@apollo/client";
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useState } from "react";
-import { useRegisterMutation } from "../generated/graphql";
+import { RegistrationError, useRegisterMutation } from "../generated/graphql";
 
 const Register: React.FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [register] = useRegisterMutation();
+  const [register] = useRegisterMutation({
+    onError: (e: ApolloError) => {
+      e.graphQLErrors.map((err) => console.log(err.message));
+    },
+    onCompleted: (data) => {
+      const typename = data.register.__typename;
+      if (typename === "BooleanResponse") {
+        navigate("/");
+      }
+      if (typename === "RegistrationError") {
+        console.log((data.register as RegistrationError).errorMessage);
+      }
+    },
+  });
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        const response = await register({ variables: { email, password } });
-
-        navigate("/");
-        console.log(response);
+        await register({ variables: { email, password } });
       }}
     >
       <div>

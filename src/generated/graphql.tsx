@@ -18,12 +18,6 @@ export type User = {
   tokenVersion: Scalars["Float"];
 };
 
-export type LoginResponse = {
-  __typename?: "LoginResponse";
-  accessToken: Scalars["String"];
-  user: User;
-};
-
 export type Query = {
   __typename?: "Query";
   protectedGqlEndpoint: Scalars["String"];
@@ -33,8 +27,8 @@ export type Query = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  register: Scalars["Boolean"];
-  login: LoginResponse;
+  register: RegistrationResult;
+  login: LoginResult;
   logout: Scalars["Boolean"];
   revokeRefreshToken: Scalars["Boolean"];
 };
@@ -51,10 +45,39 @@ export type MutationRevokeRefreshTokenArgs = {
   userId: Scalars["String"];
 };
 
+export type RegistrationResult = BooleanResponse | RegistrationError;
+
+export type BooleanResponse = {
+  __typename?: "BooleanResponse";
+  booleanResponse: Scalars["Boolean"];
+};
+
+export type RegistrationError = {
+  __typename?: "RegistrationError";
+  errorMessage: Scalars["String"];
+  emailErrorMessage?: Maybe<Scalars["String"]>;
+  passwordErrorMessage?: Maybe<Scalars["String"]>;
+};
+
 /** New user data */
 export type RegisterInput = {
   email: Scalars["String"];
   password: Scalars["String"];
+};
+
+export type LoginResult = LoginResponse | LoginError;
+
+export type LoginResponse = {
+  __typename?: "LoginResponse";
+  accessToken: Scalars["String"];
+  user: User;
+};
+
+export type LoginError = {
+  __typename?: "LoginError";
+  errorMessage: Scalars["String"];
+  emailErrorMessage?: Maybe<Scalars["String"]>;
+  passwordErrorMessage?: Maybe<Scalars["String"]>;
 };
 
 /** Login input data */
@@ -69,10 +92,14 @@ export type LoginMutationVariables = {
 };
 
 export type LoginMutation = { __typename?: "Mutation" } & {
-  login: { __typename?: "LoginResponse" } & Pick<
-    LoginResponse,
-    "accessToken"
-  > & { user: { __typename?: "User" } & Pick<User, "id" | "email"> };
+  login:
+    | ({ __typename: "LoginResponse" } & Pick<LoginResponse, "accessToken"> & {
+          user: { __typename?: "User" } & Pick<User, "id" | "email">;
+        })
+    | ({ __typename: "LoginError" } & Pick<
+        LoginError,
+        "errorMessage" | "emailErrorMessage" | "passwordErrorMessage"
+      >);
 };
 
 export type LogoutMutationVariables = {};
@@ -100,10 +127,17 @@ export type RegisterMutationVariables = {
   password: Scalars["String"];
 };
 
-export type RegisterMutation = { __typename?: "Mutation" } & Pick<
-  Mutation,
-  "register"
->;
+export type RegisterMutation = { __typename?: "Mutation" } & {
+  register:
+    | ({ __typename: "BooleanResponse" } & Pick<
+        BooleanResponse,
+        "booleanResponse"
+      >)
+    | ({ __typename: "RegistrationError" } & Pick<
+        RegistrationError,
+        "errorMessage" | "emailErrorMessage" | "passwordErrorMessage"
+      >);
+};
 
 export type UsersQueryVariables = {};
 
@@ -114,10 +148,19 @@ export type UsersQuery = { __typename?: "Query" } & {
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
     login(loginInput: { email: $email, password: $password }) {
-      accessToken
-      user {
-        id
-        email
+      ... on LoginResponse {
+        __typename
+        accessToken
+        user {
+          id
+          email
+        }
+      }
+      ... on LoginError {
+        __typename
+        errorMessage
+        emailErrorMessage
+        passwordErrorMessage
       }
     }
   }
@@ -308,7 +351,18 @@ export type ProtectedQueryResult = ApolloReactCommon.QueryResult<
 >;
 export const RegisterDocument = gql`
   mutation Register($email: String!, $password: String!) {
-    register(registerInput: { email: $email, password: $password })
+    register(registerInput: { email: $email, password: $password }) {
+      ... on BooleanResponse {
+        __typename
+        booleanResponse
+      }
+      ... on RegistrationError {
+        __typename
+        errorMessage
+        emailErrorMessage
+        passwordErrorMessage
+      }
+    }
   }
 `;
 export type RegisterMutationFn = ApolloReactCommon.MutationFunction<

@@ -1,3 +1,14 @@
 mutation Register($email: String!, $password: String!) {
-  register(registerInput: { email: $email, password: $password })
+  register(registerInput: { email: $email, password: $password }) {
+    ... on BooleanResponse {
+      __typename
+      booleanResponse
+    }
+    ... on RegistrationError {
+      __typename
+      errorMessage
+      emailErrorMessage
+      passwordErrorMessage
+    }
+  }
 }

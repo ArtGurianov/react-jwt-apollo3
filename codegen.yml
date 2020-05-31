@@ -11,3 +11,9 @@ generates:
       withHOC: false
       withComponent: false
       withHooks: true
+  src/generated/introspection.tsx:
+    plugins:
+      - "fragment-matcher"
+    config:
+      apolloClientVersion: 3
+      useExplicitTyping: true

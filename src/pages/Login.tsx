@@ -2,7 +2,13 @@ import { ApolloError } from "@apollo/client";
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext, useState } from "react";
 import { authContext } from "../App";
-import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
+import {
+  LoginError,
+  LoginResponse,
+  MeDocument,
+  MeQuery,
+  useLoginMutation,
+} from "../generated/graphql";
 
 const Login: React.FC<RouteComponentProps> = () => {
   const { setAuth } = useContext(authContext);
@@ -12,12 +18,27 @@ const Login: React.FC<RouteComponentProps> = () => {
     onError: (e: ApolloError) => {
       e.graphQLErrors.map((err) => console.log(err.message));
     },
+    onCompleted: (data) => {
+      const typename = data.login.__typename;
+      if (typename === "LoginError") {
+        console.log((data.login as LoginError).errorMessage);
+      }
+      if (typename === "LoginResponse") {
+        localStorage.setItem(
+          "accessToken",
+          (data.login as LoginResponse).accessToken
+        );
+        setAuth((prevState) => ({ ...prevState, isLoggedIn: true }));
+        navigate("/");
+      }
+    },
   });
+
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        const response = await login({
+        await login({
           variables: { email, password },
           update: (cache, { data }) => {
             if (!data) return null;
@@ -25,17 +46,11 @@ const Login: React.FC<RouteComponentProps> = () => {
               //make sure that ME and LOGIN query return same fiels. Apollo
               query: MeDocument,
               data: {
-                me: data.login.user,
+                me: (data.login as LoginResponse).user,
               },
             });
           },
         });
-
-        if (response && response.data) {
-          localStorage.setItem("accessToken", response.data.login.accessToken);
-          setAuth((prevState) => ({ ...prevState, isLoggedIn: true }));
-          navigate("/");
-        }
       }}
     >
       <div>
