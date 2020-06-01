@@ -18,6 +18,12 @@ export type User = {
   tokenVersion: Scalars["Float"];
 };
 
+export type CustomError = {
+  __typename?: "CustomError";
+  property: Scalars["String"];
+  errorMessages: Array<Scalars["String"]>;
+};
+
 export type Query = {
   __typename?: "Query";
   protectedGqlEndpoint: Scalars["String"];
@@ -45,18 +51,16 @@ export type MutationRevokeRefreshTokenArgs = {
   userId: Scalars["String"];
 };
 
-export type RegistrationResult = BooleanResponse | RegistrationError;
+export type RegistrationResult = BooleanResponse | CustomErrorsResult;
 
 export type BooleanResponse = {
   __typename?: "BooleanResponse";
   booleanResponse: Scalars["Boolean"];
 };
 
-export type RegistrationError = {
-  __typename?: "RegistrationError";
-  errorMessage: Scalars["String"];
-  emailErrorMessage?: Maybe<Scalars["String"]>;
-  passwordErrorMessage?: Maybe<Scalars["String"]>;
+export type CustomErrorsResult = {
+  __typename?: "CustomErrorsResult";
+  errors: Array<CustomError>;
 };
 
 /** New user data */
@@ -65,19 +69,12 @@ export type RegisterInput = {
   password: Scalars["String"];
 };
 
-export type LoginResult = LoginResponse | LoginError;
+export type LoginResult = LoginResponse | CustomErrorsResult;
 
 export type LoginResponse = {
   __typename?: "LoginResponse";
   accessToken: Scalars["String"];
   user: User;
-};
-
-export type LoginError = {
-  __typename?: "LoginError";
-  errorMessage: Scalars["String"];
-  emailErrorMessage?: Maybe<Scalars["String"]>;
-  passwordErrorMessage?: Maybe<Scalars["String"]>;
 };
 
 /** Login input data */
@@ -96,10 +93,14 @@ export type LoginMutation = { __typename?: "Mutation" } & {
     | ({ __typename: "LoginResponse" } & Pick<LoginResponse, "accessToken"> & {
           user: { __typename?: "User" } & Pick<User, "id" | "email">;
         })
-    | ({ __typename: "LoginError" } & Pick<
-        LoginError,
-        "errorMessage" | "emailErrorMessage" | "passwordErrorMessage"
-      >);
+    | ({ __typename: "CustomErrorsResult" } & {
+        errors: Array<
+          { __typename?: "CustomError" } & Pick<
+            CustomError,
+            "property" | "errorMessages"
+          >
+        >;
+      });
 };
 
 export type LogoutMutationVariables = {};
@@ -133,10 +134,14 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
         BooleanResponse,
         "booleanResponse"
       >)
-    | ({ __typename: "RegistrationError" } & Pick<
-        RegistrationError,
-        "errorMessage" | "emailErrorMessage" | "passwordErrorMessage"
-      >);
+    | ({ __typename: "CustomErrorsResult" } & {
+        errors: Array<
+          { __typename?: "CustomError" } & Pick<
+            CustomError,
+            "property" | "errorMessages"
+          >
+        >;
+      });
 };
 
 export type UsersQueryVariables = {};
@@ -156,11 +161,12 @@ export const LoginDocument = gql`
           email
         }
       }
-      ... on LoginError {
+      ... on CustomErrorsResult {
         __typename
-        errorMessage
-        emailErrorMessage
-        passwordErrorMessage
+        errors {
+          property
+          errorMessages
+        }
       }
     }
   }
@@ -356,11 +362,12 @@ export const RegisterDocument = gql`
         __typename
         booleanResponse
       }
-      ... on RegistrationError {
+      ... on CustomErrorsResult {
         __typename
-        errorMessage
-        emailErrorMessage
-        passwordErrorMessage
+        errors {
+          property
+          errorMessages
+        }
       }
     }
   }

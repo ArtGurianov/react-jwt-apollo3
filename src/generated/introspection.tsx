@@ -3,11 +3,11 @@
   "possibleTypes": {
     "RegistrationResult": [
       "BooleanResponse",
-      "RegistrationError"
+      "CustomErrorsResult"
     ],
     "LoginResult": [
       "LoginResponse",
-      "LoginError"
+      "CustomErrorsResult"
     ]
   }
 };
@@ -15,11 +15,11 @@
   "possibleTypes": {
     "RegistrationResult": [
       "BooleanResponse",
-      "RegistrationError"
+      "CustomErrorsResult"
     ],
     "LoginResult": [
       "LoginResponse",
-      "LoginError"
+      "CustomErrorsResult"
     ]
   }
 };

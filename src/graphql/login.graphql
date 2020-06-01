@@ -8,11 +8,12 @@ mutation Login($email: String!, $password: String!) {
         email
       }
     }
-    ... on LoginError {
+    ... on CustomErrorsResult {
       __typename
-      errorMessage
-      emailErrorMessage
-      passwordErrorMessage
+      errors {
+        property
+        errorMessages
+      }
     }
   }
 }

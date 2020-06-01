@@ -1,7 +1,7 @@
 import { ApolloError } from "@apollo/client";
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useState } from "react";
-import { RegistrationError, useRegisterMutation } from "../generated/graphql";
+import { CustomErrorsResult, useRegisterMutation } from "../generated/graphql";
 
 const Register: React.FC<RouteComponentProps> = () => {
   const [email, setEmail] = useState("");
@@ -15,8 +15,8 @@ const Register: React.FC<RouteComponentProps> = () => {
       if (typename === "BooleanResponse") {
         navigate("/");
       }
-      if (typename === "RegistrationError") {
-        console.log((data.register as RegistrationError).errorMessage);
+      if (typename === "CustomErrorsResult") {
+        console.log((data.register as CustomErrorsResult).errors);
       }
     },
   });

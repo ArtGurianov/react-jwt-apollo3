@@ -4,11 +4,12 @@ mutation Register($email: String!, $password: String!) {
       __typename
       booleanResponse
     }
-    ... on RegistrationError {
+    ... on CustomErrorsResult {
       __typename
-      errorMessage
-      emailErrorMessage
-      passwordErrorMessage
+      errors {
+        property
+        errorMessages
+      }
     }
   }
 }

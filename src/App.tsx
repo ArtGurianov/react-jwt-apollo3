@@ -38,6 +38,8 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState({ isLoggedIn: false });
 
+  //We are refreshing access token on every request.
+  //But if not logged in, it will be an error.
   useEffect(() => {
     fetch("http://localhost:3000/user/refresh_token", {
       method: "POST",

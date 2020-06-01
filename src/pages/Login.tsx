@@ -3,7 +3,7 @@ import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext, useState } from "react";
 import { authContext } from "../App";
 import {
-  LoginError,
+  CustomErrorsResult,
   LoginResponse,
   MeDocument,
   MeQuery,
@@ -20,8 +20,8 @@ const Login: React.FC<RouteComponentProps> = () => {
     },
     onCompleted: (data) => {
       const typename = data.login.__typename;
-      if (typename === "LoginError") {
-        console.log((data.login as LoginError).errorMessage);
+      if (typename === "CustomErrorsResult") {
+        console.log((data.login as CustomErrorsResult).errors);
       }
       if (typename === "LoginResponse") {
         localStorage.setItem(
