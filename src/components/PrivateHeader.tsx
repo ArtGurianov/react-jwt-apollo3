@@ -1,11 +1,11 @@
 import { ApolloError } from "@apollo/client";
 import { Link, navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext } from "react";
-import { authContext } from "../App";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
+import { AuthContext } from "../utils/AuthContext";
 
 const PrivateHeader: React.FC<RouteComponentProps> = () => {
-  const { setAuth } = useContext(authContext);
+  const { setAuth } = useContext(AuthContext);
   const { data, loading } = useMeQuery({
     onError: (e: ApolloError) => {
       e.graphQLErrors.map((err) => console.log(err.message));

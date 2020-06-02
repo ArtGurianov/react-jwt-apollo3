@@ -1,7 +1,6 @@
 import { ApolloError } from "@apollo/client";
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useContext, useState } from "react";
-import { authContext } from "../App";
 import {
   CustomErrorsResult,
   LoginResponse,
@@ -9,9 +8,10 @@ import {
   MeQuery,
   useLoginMutation,
 } from "../generated/graphql";
+import { AuthContext } from "../utils/AuthContext";
 
 const Login: React.FC<RouteComponentProps> = () => {
-  const { setAuth } = useContext(authContext);
+  const { setAuth } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login] = useLoginMutation({

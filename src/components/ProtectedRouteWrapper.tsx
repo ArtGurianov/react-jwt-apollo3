@@ -1,11 +1,11 @@
 import { Redirect } from "@reach/router";
 import React, { useContext } from "react";
-import { authContext } from "../App";
+import { AuthContext } from "../utils/AuthContext";
 
 const ProtectedRouteWrapper: React.FC = ({ children }) => {
   const {
     auth: { isLoggedIn },
-  } = useContext(authContext);
+  } = useContext(AuthContext);
   return <>{isLoggedIn ? { children } : <Redirect to="/login" noThrow />}</>;
 };
 

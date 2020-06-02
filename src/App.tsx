@@ -1,14 +1,9 @@
 import { Router } from "@reach/router";
-import React, {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Alert from "./components/Alert";
 import Home from "./pages/Home";
 import { AlertProvider } from "./utils/AlertContext";
+import { AuthContext, AuthProvider } from "./utils/AuthContext";
 import { createLazyRoute } from "./utils/createLazyRoute";
 
 const PublicHeader = createLazyRoute(
@@ -24,21 +19,16 @@ const PublicAppRoutes = createLazyRoute(
   React.lazy(() => import("./PublicAppRoutes"))
 );
 
-export interface AuthInterface {
-  auth: { isLoggedIn: boolean };
-  setAuth: Dispatch<SetStateAction<{ isLoggedIn: boolean }>>;
-}
-
-export const initialAuthValue: AuthInterface = {
-  auth: { isLoggedIn: false },
-  setAuth: () => {},
-};
-
-export const authContext = createContext(initialAuthValue);
-
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [auth, setAuth] = useState({ isLoggedIn: false });
+  const { auth, setAuth } = useContext(AuthContext);
+
+  // const authCallback = useCallback(
+  //   (value) => {
+  //     setAuth(value);
+  //   },
+  //   [setAuth]
+  // );
 
   //This UseEffect hits only on page reload
   useEffect(() => {
@@ -49,6 +39,7 @@ export const App: React.FC = () => {
       const resultJson = await x.json();
       if (resultJson.accessToken) {
         localStorage.setItem("accessToken", resultJson.accessToken);
+        //authCallback({ isLoggedIn: true });
         setAuth({ isLoggedIn: true });
       }
     });
@@ -60,7 +51,7 @@ export const App: React.FC = () => {
   }
   return (
     <AlertProvider>
-      <authContext.Provider value={{ auth, setAuth }}>
+      <AuthProvider>
         {auth.isLoggedIn ? (
           <PrivateHeader path="/" />
         ) : (
@@ -74,7 +65,7 @@ export const App: React.FC = () => {
             <PublicAppRoutes path="/*" />
           )}
         </Router>
-      </authContext.Provider>
+      </AuthProvider>
       <Alert />
     </AlertProvider>
   );
