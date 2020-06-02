@@ -19,13 +19,17 @@ const httpLink = new HttpLink({
   credentials: "include",
 });
 
-const errorLink = onError(({ graphQLErrors, networkError, response }) => {
+const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
-    graphQLErrors.map(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
+    graphQLErrors.map(({ message, locations, path }) => {
+      if (message === "Unauthorized") {
+        console.log("Logged out");
+      } else {
+        console.log(
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+        );
+      }
+    });
 
   if (networkError) console.log(`[Network error]: ${networkError}`);
 
@@ -49,16 +53,18 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
+//hits on every request
 const refreshLink = new TokenRefreshLink({
   accessTokenField: "accessToken",
   isTokenValidOrUndefined: () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      return true;
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      return true; //means we not gonna request refresh token
     }
     try {
-      const { exp } = jwtDecode(token);
-      if (Date.now() >= exp * 1000) {
+      const { exp } = jwtDecode(accessToken);
+      //hit if expiring after 5 minutes SLIDING
+      if (Date.now() + 300000 >= exp * 1000) {
         localStorage.removeItem("accessToken");
         return false;
       } else {
@@ -85,10 +91,8 @@ const refreshLink = new TokenRefreshLink({
   //   //    access_token: 'token string here'
   //   // }
   // },
-  handleError: (err) => {
-    console.warn("Your refresh token is invalid. Try to relogin");
-    console.error(err);
-
+  handleError: () => {
+    //console.log(err);
     // your custom action here
     //user.logout();
   },

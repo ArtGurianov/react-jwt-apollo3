@@ -41,14 +41,15 @@ const Login: React.FC<RouteComponentProps> = () => {
         await login({
           variables: { email, password },
           update: (cache, { data }) => {
-            if (!data) return null;
-            cache.writeQuery<MeQuery>({
-              //make sure that ME and LOGIN query return same fiels. Apollo
-              query: MeDocument,
-              data: {
-                me: (data.login as LoginResponse).user,
-              },
-            });
+            if (data && data.login.__typename === "LoginResponse") {
+              cache.writeQuery<MeQuery>({
+                //make sure that ME and LOGIN query return same fiels. Apollo
+                query: MeDocument,
+                data: {
+                  me: (data.login as LoginResponse).user,
+                },
+              });
+            }
           },
         });
       }}

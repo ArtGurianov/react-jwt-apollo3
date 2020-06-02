@@ -38,18 +38,19 @@ export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState({ isLoggedIn: false });
 
-  //We are refreshing access token on every request.
-  //But if not logged in, it will be an error.
+  //This UseEffect hits only on page reload
   useEffect(() => {
     fetch("http://localhost:3000/user/refresh_token", {
       method: "POST",
       credentials: "include",
     }).then(async (x) => {
-      const { accessToken } = await x.json();
-      localStorage.setItem("accessToken", accessToken);
-      setLoading(false);
-      accessToken && accessToken.length && setAuth({ isLoggedIn: true });
+      const resultJson = await x.json();
+      if (resultJson.accessToken) {
+        localStorage.setItem("accessToken", resultJson.accessToken);
+        setAuth({ isLoggedIn: true });
+      }
     });
+    setLoading(false);
   }, []);
 
   if (loading) {
@@ -57,7 +58,7 @@ export const App: React.FC = () => {
   }
   return (
     <authContext.Provider value={{ auth, setAuth }}>
-      {auth.isLoggedIn ? <PrivateHeader /> : <PublicHeader />}
+      {auth.isLoggedIn ? <PrivateHeader path="/" /> : <PublicHeader path="/" />}
       <Router>
         <Home path="/" />
         {auth.isLoggedIn ? (
