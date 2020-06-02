@@ -6,7 +6,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import Alert from "./components/Alert";
 import Home from "./pages/Home";
+import { AlertProvider } from "./utils/AlertContext";
 import { createLazyRoute } from "./utils/createLazyRoute";
 
 const PublicHeader = createLazyRoute(
@@ -22,17 +24,17 @@ const PublicAppRoutes = createLazyRoute(
   React.lazy(() => import("./PublicAppRoutes"))
 );
 
-export interface ContextInterface {
+export interface AuthInterface {
   auth: { isLoggedIn: boolean };
   setAuth: Dispatch<SetStateAction<{ isLoggedIn: boolean }>>;
 }
 
-const initialContext: ContextInterface = {
+export const initialAuthValue: AuthInterface = {
   auth: { isLoggedIn: false },
   setAuth: () => {},
 };
 
-export const authContext = createContext(initialContext);
+export const authContext = createContext(initialAuthValue);
 
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -57,16 +59,23 @@ export const App: React.FC = () => {
     return <div>loading...</div>;
   }
   return (
-    <authContext.Provider value={{ auth, setAuth }}>
-      {auth.isLoggedIn ? <PrivateHeader path="/" /> : <PublicHeader path="/" />}
-      <Router>
-        <Home path="/" />
+    <AlertProvider>
+      <authContext.Provider value={{ auth, setAuth }}>
         {auth.isLoggedIn ? (
-          <PrivateAppRoutes path="/*" />
+          <PrivateHeader path="/" />
         ) : (
-          <PublicAppRoutes path="/*" />
+          <PublicHeader path="/" />
         )}
-      </Router>
-    </authContext.Provider>
+        <Router>
+          <Home path="/" />
+          {auth.isLoggedIn ? (
+            <PrivateAppRoutes path="/*" />
+          ) : (
+            <PublicAppRoutes path="/*" />
+          )}
+        </Router>
+      </authContext.Provider>
+      <Alert />
+    </AlertProvider>
   );
 };

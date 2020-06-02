@@ -1,8 +1,10 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { useUsersQuery } from "../generated/graphql";
+import { useAlert } from "../utils/AlertContext";
 
 const Home: React.FC<RouteComponentProps> = () => {
+  const { sendAlert, sendError } = useAlert();
   const { data } = useUsersQuery({ fetchPolicy: "network-only" });
   if (!data) {
     return <div>loading...</div>;
@@ -19,6 +21,20 @@ const Home: React.FC<RouteComponentProps> = () => {
           );
         })}
       </ul>
+      <button
+        onClick={() => {
+          sendAlert("ALERT MESSAGE HERE");
+        }}
+      >
+        Alert!
+      </button>
+      <button
+        onClick={() => {
+          sendError("ERROR MESSAGE HERE");
+        }}
+      >
+        Error!
+      </button>
     </div>
   );
 };
