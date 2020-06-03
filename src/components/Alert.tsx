@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AlertContext } from "../utils/AlertContext";
+import { AlertContext } from "../context/AlertContext";
 import useTimeout from "./../hooks/useTimeout";
 
 const Alert = () => {
@@ -19,7 +19,7 @@ type TimerProps = {
 const AlertTimer = ({ resetAlert }: TimerProps) => {
   useTimeout(() => {
     resetAlert();
-  }, 4000);
+  }, 1000);
   return null;
 };
 

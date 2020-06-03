@@ -1,14 +1,25 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
+import { useAlert } from "../context/AlertContext";
 import { useUsersQuery } from "../generated/graphql";
-import { useAlert } from "../utils/AlertContext";
 
 const Home: React.FC<RouteComponentProps> = () => {
   const { sendAlert, sendError } = useAlert();
-  const { data } = useUsersQuery({ fetchPolicy: "network-only" });
-  if (!data) {
+  const { data, loading, error } = useUsersQuery({
+    // onError: () => {
+    //   alert("error");
+    // },
+    //fetchPolicy: "network-only",
+  });
+
+  if (!data || loading) {
     return <div>loading...</div>;
   }
+
+  if (error) {
+    return <div>error...</div>;
+  }
+
   return (
     <div>
       <div>users:</div>

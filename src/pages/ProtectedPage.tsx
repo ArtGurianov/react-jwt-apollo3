@@ -9,9 +9,6 @@ import { useProtectedQuery } from "../generated/graphql";
 const ProtectedPage: React.FC<RouteComponentProps> = () => {
   const { loading, data, error } = useProtectedQuery({
     fetchPolicy: "network-only",
-    // onError: (e: ApolloError) => {
-    //   e.graphQLErrors.map((err) => console.log(err.message));
-    // },
   });
   if (loading) {
     return <div>loading...</div>;

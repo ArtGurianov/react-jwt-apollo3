@@ -11,6 +11,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type CustomError = {
+  __typename?: "CustomError";
+  property: Scalars["String"];
+  errorMessages: Array<Scalars["String"]>;
+};
+
 export type User = {
   __typename?: "User";
   id: Scalars["ID"];
@@ -18,17 +24,18 @@ export type User = {
   tokenVersion: Scalars["Float"];
 };
 
-export type CustomError = {
-  __typename?: "CustomError";
-  property: Scalars["String"];
-  errorMessages: Array<Scalars["String"]>;
-};
-
 export type Query = {
   __typename?: "Query";
   protectedGqlEndpoint: Scalars["String"];
   users: Array<User>;
-  me?: Maybe<User>;
+  me: MeResult;
+};
+
+export type MeResult = User | CustomErrorsResult;
+
+export type CustomErrorsResult = {
+  __typename?: "CustomErrorsResult";
+  errors: Array<CustomError>;
 };
 
 export type Mutation = {
@@ -56,11 +63,6 @@ export type RegistrationResult = BooleanResponse | CustomErrorsResult;
 export type BooleanResponse = {
   __typename?: "BooleanResponse";
   booleanResponse: Scalars["Boolean"];
-};
-
-export type CustomErrorsResult = {
-  __typename?: "CustomErrorsResult";
-  errors: Array<CustomError>;
 };
 
 /** New user data */
@@ -91,7 +93,7 @@ export type LoginMutationVariables = {
 export type LoginMutation = { __typename?: "Mutation" } & {
   login:
     | ({ __typename: "LoginResponse" } & Pick<LoginResponse, "accessToken"> & {
-          user: { __typename?: "User" } & Pick<User, "id" | "email">;
+          user: { __typename: "User" } & Pick<User, "id" | "email">;
         })
     | ({ __typename: "CustomErrorsResult" } & {
         errors: Array<
@@ -113,12 +115,21 @@ export type LogoutMutation = { __typename?: "Mutation" } & Pick<
 export type MeQueryVariables = {};
 
 export type MeQuery = { __typename?: "Query" } & {
-  me?: Maybe<{ __typename?: "User" } & Pick<User, "id" | "email">>;
+  me:
+    | ({ __typename: "User" } & Pick<User, "id" | "email">)
+    | ({ __typename: "CustomErrorsResult" } & {
+        errors: Array<
+          { __typename?: "CustomError" } & Pick<
+            CustomError,
+            "property" | "errorMessages"
+          >
+        >;
+      });
 };
 
 export type ProtectedQueryVariables = {};
 
-export type ProtectedQuery = { __typename?: "Query" } & Pick<
+export type ProtectedQuery = { __typename: "Query" } & Pick<
   Query,
   "protectedGqlEndpoint"
 >;
@@ -147,7 +158,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
 export type UsersQueryVariables = {};
 
 export type UsersQuery = { __typename?: "Query" } & {
-  users: Array<{ __typename?: "User" } & Pick<User, "id" | "email">>;
+  users: Array<{ __typename: "User" } & Pick<User, "id" | "email">>;
 };
 
 export const LoginDocument = gql`
@@ -157,6 +168,7 @@ export const LoginDocument = gql`
         __typename
         accessToken
         user {
+          __typename
           id
           email
         }
@@ -261,8 +273,18 @@ export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<
 export const MeDocument = gql`
   query Me {
     me {
-      id
-      email
+      ... on User {
+        __typename
+        id
+        email
+      }
+      ... on CustomErrorsResult {
+        __typename
+        errors {
+          property
+          errorMessages
+        }
+      }
     }
   }
 `;
@@ -306,6 +328,7 @@ export type MeQueryResult = ApolloReactCommon.QueryResult<
 >;
 export const ProtectedDocument = gql`
   query Protected {
+    __typename
     protectedGqlEndpoint
   }
 `;
@@ -417,6 +440,7 @@ export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<
 export const UsersDocument = gql`
   query Users {
     users {
+      __typename
       id
       email
     }

@@ -1,6 +1,24 @@
+# query Me {
+#   me {
+#     __typename
+#     id
+#     email
+#   }
+# }
+
 query Me {
   me {
-    id
-    email
+    ... on User {
+      __typename
+      id
+      email
+    }
+    ... on CustomErrorsResult {
+      __typename
+      errors {
+        property
+        errorMessages
+      }
+    }
   }
 }

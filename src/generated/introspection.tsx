@@ -1,6 +1,10 @@
 
       export type PossibleTypesResultData = {
   "possibleTypes": {
+    "MeResult": [
+      "User",
+      "CustomErrorsResult"
+    ],
     "RegistrationResult": [
       "BooleanResponse",
       "CustomErrorsResult"
@@ -13,6 +17,10 @@
 };
       const result: PossibleTypesResultData = {
   "possibleTypes": {
+    "MeResult": [
+      "User",
+      "CustomErrorsResult"
+    ],
     "RegistrationResult": [
       "BooleanResponse",
       "CustomErrorsResult"

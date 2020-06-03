@@ -22,7 +22,7 @@ interface AlertInterface {
   resetAlert: () => void;
 }
 
-export const initialAlertValue: AlertInterface = {
+const initialAlertValue: AlertInterface = {
   alert: {
     text: "",
     type: "success",

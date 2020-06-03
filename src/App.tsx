@@ -1,9 +1,8 @@
 import { Router } from "@reach/router";
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import Alert from "./components/Alert";
+import { useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
-import { AlertProvider } from "./utils/AlertContext";
-import { AuthContext, AuthProvider } from "./utils/AuthContext";
 import { createLazyRoute } from "./utils/createLazyRoute";
 
 const PublicHeader = createLazyRoute(
@@ -20,53 +19,24 @@ const PublicAppRoutes = createLazyRoute(
 );
 
 export const App: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const { auth, setAuth } = useContext(AuthContext);
+  const { data } = useAuth();
 
-  // const authCallback = useCallback(
-  //   (value) => {
-  //     setAuth(value);
-  //   },
-  //   [setAuth]
-  // );
-
-  //This UseEffect hits only on page reload
-  useEffect(() => {
-    fetch("http://localhost:3000/user/refresh_token", {
-      method: "POST",
-      credentials: "include",
-    }).then(async (x) => {
-      const resultJson = await x.json();
-      if (resultJson.accessToken) {
-        localStorage.setItem("accessToken", resultJson.accessToken);
-        //authCallback({ isLoggedIn: true });
-        setAuth({ isLoggedIn: true });
-      }
-    });
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return <div>loading...</div>;
-  }
   return (
-    <AlertProvider>
-      <AuthProvider>
-        {auth.isLoggedIn ? (
-          <PrivateHeader path="/" />
+    <>
+      {data?.me.__typename === "User" ? (
+        <PrivateHeader path="/" />
+      ) : (
+        <PublicHeader path="/" />
+      )}
+      <Router>
+        <Home path="/" />
+        {data?.me.__typename === "User" ? (
+          <PrivateAppRoutes path="/*" />
         ) : (
-          <PublicHeader path="/" />
+          <PublicAppRoutes path="/*" />
         )}
-        <Router>
-          <Home path="/" />
-          {auth.isLoggedIn ? (
-            <PrivateAppRoutes path="/*" />
-          ) : (
-            <PublicAppRoutes path="/*" />
-          )}
-        </Router>
-      </AuthProvider>
+      </Router>
       <Alert />
-    </AlertProvider>
+    </>
   );
 };

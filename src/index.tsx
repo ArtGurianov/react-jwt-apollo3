@@ -12,6 +12,8 @@ import jwtDecode from "jwt-decode";
 import React from "react";
 import ReactDOM from "react-dom";
 import { App } from "./App";
+import { AlertProvider } from "./context/AlertContext";
+import { AuthProvider } from "./context/AuthContext";
 import introspectionResult from "./generated/introspection";
 
 const httpLink = new HttpLink({
@@ -111,7 +113,11 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <AlertProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </AlertProvider>
   </ApolloProvider>,
   document.getElementById("root")
 );

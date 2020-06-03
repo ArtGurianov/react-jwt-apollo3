@@ -1,57 +1,23 @@
-import { ApolloError } from "@apollo/client";
 import { navigate, RouteComponentProps } from "@reach/router";
-import React, { useContext, useState } from "react";
-import {
-  CustomErrorsResult,
-  LoginResponse,
-  MeDocument,
-  MeQuery,
-  useLoginMutation,
-} from "../generated/graphql";
-import { AuthContext } from "../utils/AuthContext";
+import React, { useState } from "react";
+import { useAlert } from "../context/AlertContext";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC<RouteComponentProps> = () => {
-  const { setAuth } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login] = useLoginMutation({
-    onError: (e: ApolloError) => {
-      e.graphQLErrors.map((err) => console.log(err.message));
-    },
-    onCompleted: (data) => {
-      const typename = data.login.__typename;
-      if (typename === "CustomErrorsResult") {
-        console.log((data.login as CustomErrorsResult).errors);
-      }
-      if (typename === "LoginResponse") {
-        localStorage.setItem(
-          "accessToken",
-          (data.login as LoginResponse).accessToken
-        );
-        setAuth((prevState) => ({ ...prevState, isLoggedIn: true }));
-        navigate("/");
-      }
-    },
-  });
+  const { login } = useAuth();
+  const { sendAlert } = useAlert();
 
   return (
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        await login({
-          variables: { email, password },
-          update: (cache, { data }) => {
-            if (data && data.login.__typename === "LoginResponse") {
-              cache.writeQuery<MeQuery>({
-                //make sure that ME and LOGIN query return same fiels. Apollo
-                query: MeDocument,
-                data: {
-                  me: (data.login as LoginResponse).user,
-                },
-              });
-            }
-          },
-        });
+        const result = await login(email, password);
+        if (result?.login?.__typename === "LoginResponse") {
+          sendAlert("Logged in!");
+          navigate("/");
+        }
       }}
     >
       <div>
