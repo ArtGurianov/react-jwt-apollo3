@@ -12,6 +12,7 @@ export const REFISTER_MUTATION = gql`
         id
         errors {
           __typename
+          id
           property
           errorMessages
         }

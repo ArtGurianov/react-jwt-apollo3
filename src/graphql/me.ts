@@ -1,22 +1,23 @@
 import { gql } from "@apollo/client";
 
 export const ME_QUERY = gql`
-query Me {
-  me {
-    ... on User {
-      __typename
-      id
-      email
-    }
-    ... on CustomErrorsResult {
-      __typename
-      id
-      errors {
+  query Me {
+    me {
+      ... on User {
         __typename
-        property
-        errorMessages
+        id
+        email
+      }
+      ... on CustomErrorsResult {
+        __typename
+        id
+        errors {
+          __typename
+          id
+          property
+          errorMessages
+        }
       }
     }
   }
-}
-`
+`;

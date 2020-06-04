@@ -1,14 +1,11 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { useState } from "react";
-import { useAlert } from "../context/AlertContext";
 import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
-  //const { logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
-  const { sendAlert } = useAlert();
 
   return (
     <form
@@ -16,7 +13,6 @@ const Login: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         e.preventDefault();
         const result = await login(email, password);
         if (result?.login?.__typename === "LoginResponse") {
-          sendAlert("Logged in!");
           navigate("/");
         }
       }}

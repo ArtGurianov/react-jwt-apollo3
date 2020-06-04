@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type CustomError = {
   __typename?: "CustomError";
+  id: Scalars["ID"];
   property: Scalars["String"];
   errorMessages: Array<Scalars["String"]>;
 };
@@ -100,7 +101,7 @@ export type LoginMutation = { __typename?: "Mutation" } & {
           errors: Array<
             { __typename: "CustomError" } & Pick<
               CustomError,
-              "property" | "errorMessages"
+              "id" | "property" | "errorMessages"
             >
           >;
         });
@@ -122,7 +123,7 @@ export type MeQuery = { __typename?: "Query" } & {
           errors: Array<
             { __typename: "CustomError" } & Pick<
               CustomError,
-              "property" | "errorMessages"
+              "id" | "property" | "errorMessages"
             >
           >;
         });
@@ -150,7 +151,7 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
           errors: Array<
             { __typename: "CustomError" } & Pick<
               CustomError,
-              "property" | "errorMessages"
+              "id" | "property" | "errorMessages"
             >
           >;
         });
@@ -179,6 +180,7 @@ export const LoginDocument = gql`
         id
         errors {
           __typename
+          id
           property
           errorMessages
         }
@@ -286,6 +288,7 @@ export const MeDocument = gql`
         id
         errors {
           __typename
+          id
           property
           errorMessages
         }
@@ -395,6 +398,7 @@ export const RegisterDocument = gql`
         id
         errors {
           __typename
+          id
           property
           errorMessages
         }

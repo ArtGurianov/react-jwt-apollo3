@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   CustomErrorsResult,
   LoginResponse,
+  MeDocument,
   useLoginMutation,
   useLogoutMutation,
   useMeQuery,
@@ -27,7 +28,14 @@ export const initialMeData = {
   me: {
     __typename: "CustomErrorsResult",
     id: "4926e3d6-ac6e-41a0-b309-64747b443b0c",
-    errors: [{ property: "auth", errorMessages: ["logged out"] }],
+    errors: [
+      {
+        __typename: "CustomError",
+        id: "1d46728a-dbc3-4335-a98e-26f7aa8d3fc7",
+        property: "auth",
+        errorMessages: ["logged out"],
+      },
+    ],
   } as CustomErrorsResult,
 };
 
@@ -45,7 +53,7 @@ function AuthProvider(props: any) {
   const [isLoading, setIsLoading] = useState(true);
 
   const { loading, data, refetch } = useMeQuery({
-    errorPolicy: "all",
+    errorPolicy: "none",
     fetchPolicy: "network-only",
   });
 
@@ -68,6 +76,7 @@ function AuthProvider(props: any) {
           "accessToken",
           (data.login as LoginResponse).accessToken
         );
+        sendAlert("logged in ^^");
       }
     },
   });
@@ -95,6 +104,15 @@ function AuthProvider(props: any) {
     fetchPolicy: "no-cache",
     onError: (e: ApolloError) => {
       e.graphQLErrors.map((err) => sendError(err.message));
+    },
+    onCompleted: async (data) => {
+      if (data.logout === true) {
+        localStorage.removeItem("accessToken");
+        //refetch(); can't refetch because clearStore destroys MeQuery. Also can't resetStore cause meQuery is active
+        await client!.clearStore();
+        client?.writeQuery({ query: MeDocument, data: initialMeData });
+        sendAlert("logged out ^^");
+      }
     },
   });
 
@@ -151,12 +169,6 @@ function AuthProvider(props: any) {
       //   });
       // },
     });
-    localStorage.removeItem("accessToken");
-    await client!.clearStore();
-    refetch();
-    if (result.data?.logout === true) {
-      sendAlert("logged out");
-    }
     return result.data;
   };
 
