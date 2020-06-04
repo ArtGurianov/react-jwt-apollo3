@@ -1,36 +1,26 @@
+import { useApolloClient } from "@apollo/client";
 import { RouteComponentProps } from "@reach/router";
-import React from "react";
-import { useProtectedQuery } from "../generated/graphql";
+import React, { useState } from "react";
+import { PROTECTED_QUERY } from "../graphql/protected";
 
-//terrorizing server even at trying to normally reach endpoint
-//WITHOUT onError. it just crashed and stopped
-//WITH onError. it keeps reloading
-//onError prevents throwing
 const ProtectedPage: React.FC<RouteComponentProps> = () => {
-  const { loading, data, error } = useProtectedQuery({
-    fetchPolicy: "network-only",
+  const [content, setContent] = useState("");
+  const client = useApolloClient();
+  client.query({ query: PROTECTED_QUERY }).then((result) => {
+    setContent(result.data?.protectedGqlEndpoint);
   });
-  if (loading) {
-    return <div>loading...</div>;
-  }
-  if (error) {
+
+  if (content.length) {
     return (
       <div>
-        {error.graphQLErrors.map((e, index) => {
-          return <div key={index}>{e.message}</div>;
-        })}
+        <div>got protected message for ya:</div>
+        <div>{content}</div>
       </div>
     );
-  }
-  if (!data) {
-    return null;
-  }
-  return (
-    <div>
-      <div>protected GQL endpoint:</div>
-      <div>{data.protectedGqlEndpoint}</div>
-    </div>
-  );
+  } else
+    return (
+      <div>can't read that protected data. Maybe too much of protection ^^</div>
+    );
 };
 
 export default ProtectedPage;

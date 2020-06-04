@@ -1,9 +1,9 @@
-import { Router } from "@reach/router";
+import { RouteComponentProps, Router } from "@reach/router";
 import React from "react";
 import NotFound from "./pages/NotFound";
 import ProtectedPage from "./pages/ProtectedPage";
 
-const PrivateAppRoutes: React.FC = () => {
+const PrivateAppRoutes: React.FC<RouteComponentProps> = () => {
   return (
     <Router>
       <ProtectedPage path="/protected" />

@@ -1,4 +1,0 @@
-query Protected {
-  __typename
-  protectedGqlEndpoint
-}

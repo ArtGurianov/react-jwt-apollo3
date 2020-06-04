@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useAlert } from "../context/AlertContext";
 import { useAuth } from "../context/AuthContext";
 
-const Login: React.FC<RouteComponentProps> = () => {
+const Login: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
+  //const { logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();

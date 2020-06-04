@@ -1,10 +1,10 @@
-import { Router } from "@reach/router";
+import { RouteComponentProps, Router } from "@reach/router";
 import React from "react";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 
-const PublicAppRoutes: React.FC = () => {
+const PublicAppRoutes: React.FC<RouteComponentProps> = () => {
   return (
     <Router>
       <Register path="/register" />

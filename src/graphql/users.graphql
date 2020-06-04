@@ -1,7 +1,0 @@
-query Users {
-  users {
-    __typename
-    id
-    email
-  }
-}

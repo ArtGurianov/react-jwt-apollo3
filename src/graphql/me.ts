@@ -1,11 +1,6 @@
-# query Me {
-#   me {
-#     __typename
-#     id
-#     email
-#   }
-# }
+import { gql } from "@apollo/client";
 
+export const ME_QUERY = gql`
 query Me {
   me {
     ... on User {
@@ -24,3 +19,4 @@ query Me {
     }
   }
 }
+`

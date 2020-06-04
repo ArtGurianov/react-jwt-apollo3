@@ -3,7 +3,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateHeader: React.FC<RouteComponentProps> = () => {
-  const { data, logout } = useAuth();
+  const { data } = useAuth();
 
   let body: any = null;
 
@@ -25,8 +25,9 @@ const PrivateHeader: React.FC<RouteComponentProps> = () => {
         {data?.me.__typename === "User" && (
           <button
             onClick={async () => {
-              await logout();
-              navigate("/login");
+              //gotta logout after unmount for safe exit.
+              //login page will be not found due to suspended switch of app, so logic described at NotFound.tsx
+              navigate("/login", { state: { action: "logout" } });
             }}
           >
             logout

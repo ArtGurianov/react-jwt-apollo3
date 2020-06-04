@@ -22,11 +22,12 @@ interface AuthInterface {
   logout: any;
 }
 
-const initialMeData = {
+export const initialMeData = {
   me: {
+    __typename: "CustomErrorsResult",
     id: "4926e3d6-ac6e-41a0-b309-64747b443b0c",
     errors: [{ property: "auth", errorMessages: ["logged out"] }],
-  },
+  } as CustomErrorsResult,
 };
 
 const InitialAuthValue: AuthInterface = {
@@ -43,17 +44,8 @@ function AuthProvider(props: any) {
   const [isLoading, setIsLoading] = useState(true);
 
   const { loading, data, refetch } = useMeQuery({
-    // CAUSES ENDLESS LOOP
-    // onCompleted: (data) => {
-    //   console.log("ME QUERY SUCCESSFUL AUTHCONTEXT");
-    //   console.log(data);
-    // },
-    // onError: (e) => {
-    //   console.log("ME QUERY THROWN FROM AUTH CONTEXT");
-    //   console.log(e);
-    // },
-    errorPolicy: "ignore",
-    fetchPolicy: "cache-and-network",
+    errorPolicy: "all",
+    fetchPolicy: "network-only",
   });
 
   const [loginMutation] = useLoginMutation({
@@ -75,7 +67,6 @@ function AuthProvider(props: any) {
           "accessToken",
           (data.login as LoginResponse).accessToken
         );
-        refetch(); //WE RECEIVE USER OBJECT FROM LOGIN SO CAN JUST WRITEQUERY AT LOGIN
       }
     },
   });
@@ -100,6 +91,7 @@ function AuthProvider(props: any) {
   });
 
   const [logoutMutation, { client }] = useLogoutMutation({
+    fetchPolicy: "no-cache",
     onError: (e: ApolloError) => {
       e.graphQLErrors.map((err) => sendError(err.message));
     },
@@ -124,32 +116,46 @@ function AuthProvider(props: any) {
   const login = async (email: string, password: string) => {
     const result = await loginMutation({
       variables: { email, password },
-      // update: (cache, { data }) => {
-      //   if (data?.login?.__typename === "LoginResponse") {
-      //     cache.writeQuery<MeQuery>({
-      //       //make sure that ME and LOGIN query return same fields. Apollo
-      //       query: MeDocument,
-      //       data: {
-      //         me: (data.login as LoginResponse).user,
-      //       },
-      //     });
-      //   }
-      // },
+      update: (cache, { data }) => {
+        if (data?.login?.__typename === "LoginResponse") {
+          //cache.writeQuery<MeQuery>({
+          // cache.writeQuery<any>({
+          //   query: MeDocument,
+          //   data: {
+          //     me: (data.login as LoginResponse).user,
+          //   },
+          // });
+        }
+      },
     });
-    return result?.data;
+    refetch();
+    return result.data;
   };
 
   const register = async (email: string, password: string) => {
-    const result = await registerMutation({ variables: { email, password } });
-    return result?.data;
+    const result = await registerMutation({
+      variables: { email, password },
+    });
+    return result.data;
   };
 
   const logout = async () => {
-    const result = await logoutMutation();
+    const result = await logoutMutation({
+      // update: (cache) => {
+      //   //cache.writeQuery<MeQuery>({
+      //   cache.writeQuery<any>({
+      //     query: MeDocument,
+      //     data: initialMeData,
+      //   });
+      // },
+    });
     localStorage.removeItem("accessToken");
-    client!.clearStore();
-    refetch(); //me query refetching
-    return result?.data;
+    await client!.clearStore();
+    refetch();
+    if (result.data?.logout === true) {
+      sendAlert("logged out");
+    }
+    return result.data;
   };
 
   if (isLoading || loading) {
