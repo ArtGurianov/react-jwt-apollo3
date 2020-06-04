@@ -9,6 +9,7 @@ import {
   User,
   useRegisterMutation,
 } from "../generated/graphql";
+import { USERS_QUERY } from "../graphql/users";
 import { useAlert } from "./AlertContext";
 
 //   data: MeQueryHookResult["data"];
@@ -135,6 +136,7 @@ function AuthProvider(props: any) {
   const register = async (email: string, password: string) => {
     const result = await registerMutation({
       variables: { email, password },
+      refetchQueries: [{ query: USERS_QUERY }],
     });
     return result.data;
   };
