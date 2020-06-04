@@ -24,6 +24,7 @@ interface AuthInterface {
 
 const initialMeData = {
   me: {
+    id: "4926e3d6-ac6e-41a0-b309-64747b443b0c",
     errors: [{ property: "auth", errorMessages: ["logged out"] }],
   },
 };
@@ -147,7 +148,7 @@ function AuthProvider(props: any) {
     const result = await logoutMutation();
     localStorage.removeItem("accessToken");
     client!.clearStore();
-    //refetch(); //me query refetching
+    refetch(); //me query refetching
     return result?.data;
   };
 

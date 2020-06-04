@@ -15,7 +15,9 @@ query Me {
     }
     ... on CustomErrorsResult {
       __typename
+      id
       errors {
+        __typename
         property
         errorMessages
       }

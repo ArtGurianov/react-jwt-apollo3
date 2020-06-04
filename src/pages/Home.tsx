@@ -9,7 +9,7 @@ const Home: React.FC<RouteComponentProps> = () => {
     // onError: () => {
     //   alert("error");
     // },
-    //fetchPolicy: "network-only",
+    fetchPolicy: "network-only",
   });
 
   if (!data || loading) {

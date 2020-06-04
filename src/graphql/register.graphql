@@ -6,7 +6,9 @@ mutation Register($email: String!, $password: String!) {
     }
     ... on CustomErrorsResult {
       __typename
+      id
       errors {
+        __typename
         property
         errorMessages
       }

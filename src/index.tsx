@@ -2,7 +2,6 @@ import {
   ApolloClient,
   ApolloLink,
   ApolloProvider,
-  concat,
   HttpLink,
   InMemoryCache,
 } from "@apollo/client";
@@ -105,10 +104,11 @@ const client = new ApolloClient({
     possibleTypes: introspectionResult.possibleTypes,
   }),
   credentials: "include",
-  link: concat(
-    refreshLink,
-    concat(errorLink, concat(authMiddleware, httpLink))
-  ),
+  // link: concat(
+  //   refreshLink,
+  //   concat(errorLink, concat(authMiddleware, httpLink))
+  // ),
+  link: ApolloLink.from([refreshLink, errorLink, authMiddleware, httpLink]),
 });
 
 ReactDOM.render(

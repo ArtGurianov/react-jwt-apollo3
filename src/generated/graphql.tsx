@@ -35,6 +35,7 @@ export type MeResult = User | CustomErrorsResult;
 
 export type CustomErrorsResult = {
   __typename?: "CustomErrorsResult";
+  id: Scalars["ID"];
   errors: Array<CustomError>;
 };
 
@@ -95,14 +96,14 @@ export type LoginMutation = { __typename?: "Mutation" } & {
     | ({ __typename: "LoginResponse" } & Pick<LoginResponse, "accessToken"> & {
           user: { __typename: "User" } & Pick<User, "id" | "email">;
         })
-    | ({ __typename: "CustomErrorsResult" } & {
-        errors: Array<
-          { __typename?: "CustomError" } & Pick<
-            CustomError,
-            "property" | "errorMessages"
-          >
-        >;
-      });
+    | ({ __typename: "CustomErrorsResult" } & Pick<CustomErrorsResult, "id"> & {
+          errors: Array<
+            { __typename: "CustomError" } & Pick<
+              CustomError,
+              "property" | "errorMessages"
+            >
+          >;
+        });
 };
 
 export type LogoutMutationVariables = {};
@@ -117,14 +118,14 @@ export type MeQueryVariables = {};
 export type MeQuery = { __typename?: "Query" } & {
   me:
     | ({ __typename: "User" } & Pick<User, "id" | "email">)
-    | ({ __typename: "CustomErrorsResult" } & {
-        errors: Array<
-          { __typename?: "CustomError" } & Pick<
-            CustomError,
-            "property" | "errorMessages"
-          >
-        >;
-      });
+    | ({ __typename: "CustomErrorsResult" } & Pick<CustomErrorsResult, "id"> & {
+          errors: Array<
+            { __typename: "CustomError" } & Pick<
+              CustomError,
+              "property" | "errorMessages"
+            >
+          >;
+        });
 };
 
 export type ProtectedQueryVariables = {};
@@ -145,14 +146,14 @@ export type RegisterMutation = { __typename?: "Mutation" } & {
         BooleanResponse,
         "booleanResponse"
       >)
-    | ({ __typename: "CustomErrorsResult" } & {
-        errors: Array<
-          { __typename?: "CustomError" } & Pick<
-            CustomError,
-            "property" | "errorMessages"
-          >
-        >;
-      });
+    | ({ __typename: "CustomErrorsResult" } & Pick<CustomErrorsResult, "id"> & {
+          errors: Array<
+            { __typename: "CustomError" } & Pick<
+              CustomError,
+              "property" | "errorMessages"
+            >
+          >;
+        });
 };
 
 export type UsersQueryVariables = {};
@@ -175,7 +176,9 @@ export const LoginDocument = gql`
       }
       ... on CustomErrorsResult {
         __typename
+        id
         errors {
+          __typename
           property
           errorMessages
         }
@@ -280,7 +283,9 @@ export const MeDocument = gql`
       }
       ... on CustomErrorsResult {
         __typename
+        id
         errors {
+          __typename
           property
           errorMessages
         }
@@ -387,7 +392,9 @@ export const RegisterDocument = gql`
       }
       ... on CustomErrorsResult {
         __typename
+        id
         errors {
+          __typename
           property
           errorMessages
         }
