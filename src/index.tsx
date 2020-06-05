@@ -12,8 +12,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { App } from "./App";
 import { AlertProvider } from "./context/AlertContext";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, initialMeData } from "./context/AuthContext";
 import introspectionResult from "./generated/introspection";
+import { ME_QUERY } from "./graphql/me";
 
 const httpLink = new HttpLink({
   uri: "http://localhost:3000/graphql",
@@ -99,10 +100,11 @@ const refreshLink = new TokenRefreshLink({
   },
 });
 
+const cache = new InMemoryCache({
+  possibleTypes: introspectionResult.possibleTypes,
+});
 const client = new ApolloClient({
-  cache: new InMemoryCache({
-    possibleTypes: introspectionResult.possibleTypes,
-  }),
+  cache: cache,
   credentials: "include",
   // link: concat(
   //   refreshLink,
@@ -110,6 +112,14 @@ const client = new ApolloClient({
   // ),
   link: ApolloLink.from([refreshLink, errorLink, authMiddleware, httpLink]),
 });
+
+const writeInitialData = async () => {
+  await cache.writeQuery({ query: ME_QUERY, data: initialMeData });
+};
+
+writeInitialData();
+
+client.onResetStore(writeInitialData);
 
 ReactDOM.render(
   <ApolloProvider client={client}>

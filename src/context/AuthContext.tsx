@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   CustomErrorsResult,
   LoginResponse,
-  MeDocument,
   useLoginMutation,
   useLogoutMutation,
   useMeQuery,
@@ -109,8 +108,8 @@ function AuthProvider(props: any) {
       if (data.logout === true) {
         localStorage.removeItem("accessToken");
         //refetch(); can't refetch because clearStore destroys MeQuery. Also can't resetStore cause meQuery is active
-        await client!.clearStore();
-        client?.writeQuery({ query: MeDocument, data: initialMeData });
+        //await client!.clearStore();
+        //client?.writeQuery({ query: MeDocument, data: initialMeData });
         sendAlert("logged out ^^");
       }
     },
@@ -160,15 +159,7 @@ function AuthProvider(props: any) {
   };
 
   const logout = async () => {
-    const result = await logoutMutation({
-      // update: (cache) => {
-      //   //cache.writeQuery<MeQuery>({
-      //   cache.writeQuery<any>({
-      //     query: MeDocument,
-      //     data: initialMeData,
-      //   });
-      // },
-    });
+    const result = await logoutMutation({});
     return result.data;
   };
 

@@ -1,6 +1,6 @@
+import { useApolloClient } from "@apollo/client";
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useAuth } from "../context/AuthContext";
 
 export interface ExtendedRouteComponentProps
   extends RouteComponentProps<{
@@ -10,10 +10,11 @@ export interface ExtendedRouteComponentProps
 const NotFound: React.FC<ExtendedRouteComponentProps> = (
   props: ExtendedRouteComponentProps
 ) => {
-  const { logout } = useAuth();
+  //const { logout } = useAuth();
+  const client = useApolloClient();
 
   if (props?.location?.state?.action === "logout") {
-    logout();
+    client.resetStore();
     props.location.state.action = "";
   }
 
