@@ -16,6 +16,7 @@ import ReactDOM from "react-dom";
 import { App } from "./App";
 import { AlertProvider } from "./context/AlertContext";
 import { AuthProvider, initialMeData } from "./context/AuthContext";
+import { UserProvider } from "./context/UserContext";
 import introspectionResult from "./generated/introspection";
 import { ME_QUERY } from "./graphql/me";
 
@@ -133,7 +134,9 @@ persistCache({
     <ApolloProvider client={client}>
       <AlertProvider>
         <AuthProvider>
-          <App />
+          <UserProvider>
+            <App />
+          </UserProvider>
         </AuthProvider>
       </AlertProvider>
     </ApolloProvider>,

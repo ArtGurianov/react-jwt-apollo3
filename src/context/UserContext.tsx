@@ -1,13 +1,16 @@
 import React, { createContext } from "react";
+import { User } from "../generated/graphql";
 import { useAuth } from "./AuthContext";
 
-const UserContext = createContext(null);
+const initialUserValue: User | null = null;
+
+const UserContext = createContext(initialUserValue);
 
 const UserProvider = (props: any) => {
   const { data } = useAuth();
   return (
     <UserContext.Provider
-      value={data.me.__typename === "User" ? data : null}
+      value={data.me.__typename === "User" ? (data.me as User) : null}
       {...props}
     />
   );

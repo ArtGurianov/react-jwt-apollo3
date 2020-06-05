@@ -1,5 +1,5 @@
 import { Router } from "@reach/router";
-import React, { useEffect } from "react";
+import React from "react";
 import Alert from "./components/Alert";
 import { useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
@@ -20,10 +20,6 @@ const PublicAppRoutes = createLazyRoute(
 
 export const App: React.FC = () => {
   const { data } = useAuth();
-
-  useEffect(() => {
-    console.log("rerender");
-  });
 
   return (
     <>
