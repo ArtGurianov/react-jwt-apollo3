@@ -53,7 +53,7 @@ function AuthProvider(props: any) {
 
   const { loading, data, refetch } = useMeQuery({
     errorPolicy: "none",
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   const [loginMutation] = useLoginMutation({
@@ -78,9 +78,6 @@ function AuthProvider(props: any) {
         sendAlert("logged in ^^");
       }
     },
-    update: () => {
-      console.log("ready to update after Login");
-    },
   });
 
   const [registerMutation] = useRegisterMutation({
@@ -101,9 +98,6 @@ function AuthProvider(props: any) {
         });
       }
     },
-    update: () => {
-      console.log("ready to update after Register");
-    },
   });
 
   const [logoutMutation] = useLogoutMutation({
@@ -114,14 +108,8 @@ function AuthProvider(props: any) {
     onCompleted: async (data) => {
       if (data.logout === true) {
         localStorage.removeItem("accessToken");
-        //refetch(); can't refetch here because clearStore destroys MeQuery. Also can't resetStore cause meQuery is active
-        //await client!.clearStore();
-        //client?.writeQuery({ query: MeDocument, data: initialMeData });
         sendAlert("logged out ^^");
       }
-    },
-    update: () => {
-      console.log("ready to update after Logout");
     },
   });
 
@@ -144,20 +132,8 @@ function AuthProvider(props: any) {
   const login = async (email: string, password: string) => {
     const result = await loginMutation({
       variables: { email, password },
-      update: () => {
-        console.log("ready to update after Login 2");
-        // if (data?.login?.__typename === "LoginResponse") {
-        //   //cache.writeQuery<MeQuery>({
-        //   // cache.writeQuery<any>({
-        //   //   query: MeDocument,
-        //   //   data: {
-        //   //     me: (data.login as LoginResponse).user,
-        //   //   },
-        //   // });
-        // }
-      },
     });
-    refetch();
+    result?.data?.login?.__typename === "LoginResponse" && refetch();
     return result.data;
   };
 
@@ -165,19 +141,12 @@ function AuthProvider(props: any) {
     const result = await registerMutation({
       variables: { email, password },
       refetchQueries: [{ query: USERS_QUERY }],
-      update: () => {
-        console.log("ready to update after Register 2");
-      },
     });
     return result.data;
   };
 
   const logout = async () => {
-    const result = await logoutMutation({
-      update: () => {
-        console.log("ready to update after Logout 2");
-      },
-    });
+    const result = await logoutMutation();
     return result.data;
   };
 
