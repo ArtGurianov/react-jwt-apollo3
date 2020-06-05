@@ -4,8 +4,11 @@ import {
   ApolloProvider,
   HttpLink,
   InMemoryCache,
+  NormalizedCacheObject,
 } from "@apollo/client";
 import { onError } from "@apollo/link-error";
+import { persistCache } from "apollo-cache-persist";
+import { PersistedData, PersistentStorage } from "apollo-cache-persist/types";
 import { TokenRefreshLink } from "apollo-link-token-refresh";
 import jwtDecode from "jwt-decode";
 import React from "react";
@@ -103,31 +106,37 @@ const refreshLink = new TokenRefreshLink({
 const cache = new InMemoryCache({
   possibleTypes: introspectionResult.possibleTypes,
 });
-const client = new ApolloClient({
-  cache: cache,
-  credentials: "include",
-  // link: concat(
-  //   refreshLink,
-  //   concat(errorLink, concat(authMiddleware, httpLink))
-  // ),
-  link: ApolloLink.from([refreshLink, errorLink, authMiddleware, httpLink]),
-});
 
 const writeInitialData = async () => {
   await cache.writeQuery({ query: ME_QUERY, data: initialMeData });
 };
 
-writeInitialData();
+persistCache({
+  cache,
+  storage: window.localStorage as PersistentStorage<
+    PersistedData<NormalizedCacheObject>
+  >,
+}).then(() => {
+  const client = new ApolloClient({
+    cache: cache,
+    credentials: "include",
+    // link: concat(
+    //   refreshLink,
+    //   concat(errorLink, concat(authMiddleware, httpLink))
+    // ),
+    link: ApolloLink.from([refreshLink, errorLink, authMiddleware, httpLink]),
+  });
 
-client.onResetStore(writeInitialData);
+  client.onResetStore(writeInitialData);
 
-ReactDOM.render(
-  <ApolloProvider client={client}>
-    <AlertProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </AlertProvider>
-  </ApolloProvider>,
-  document.getElementById("root")
-);
+  ReactDOM.render(
+    <ApolloProvider client={client}>
+      <AlertProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </AlertProvider>
+    </ApolloProvider>,
+    document.getElementById("root")
+  );
+});

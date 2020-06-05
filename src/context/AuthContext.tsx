@@ -78,7 +78,11 @@ function AuthProvider(props: any) {
         sendAlert("logged in ^^");
       }
     },
+    update: () => {
+      console.log("ready to update after Login");
+    },
   });
+
   const [registerMutation] = useRegisterMutation({
     fetchPolicy: "no-cache",
     onError: (e: ApolloError) => {
@@ -97,9 +101,12 @@ function AuthProvider(props: any) {
         });
       }
     },
+    update: () => {
+      console.log("ready to update after Register");
+    },
   });
 
-  const [logoutMutation, { client }] = useLogoutMutation({
+  const [logoutMutation] = useLogoutMutation({
     fetchPolicy: "no-cache",
     onError: (e: ApolloError) => {
       e.graphQLErrors.map((err) => sendError(err.message));
@@ -107,11 +114,14 @@ function AuthProvider(props: any) {
     onCompleted: async (data) => {
       if (data.logout === true) {
         localStorage.removeItem("accessToken");
-        //refetch(); can't refetch because clearStore destroys MeQuery. Also can't resetStore cause meQuery is active
+        //refetch(); can't refetch here because clearStore destroys MeQuery. Also can't resetStore cause meQuery is active
         //await client!.clearStore();
         //client?.writeQuery({ query: MeDocument, data: initialMeData });
         sendAlert("logged out ^^");
       }
+    },
+    update: () => {
+      console.log("ready to update after Logout");
     },
   });
 
@@ -134,16 +144,17 @@ function AuthProvider(props: any) {
   const login = async (email: string, password: string) => {
     const result = await loginMutation({
       variables: { email, password },
-      update: (cache, { data }) => {
-        if (data?.login?.__typename === "LoginResponse") {
-          //cache.writeQuery<MeQuery>({
-          // cache.writeQuery<any>({
-          //   query: MeDocument,
-          //   data: {
-          //     me: (data.login as LoginResponse).user,
-          //   },
-          // });
-        }
+      update: () => {
+        console.log("ready to update after Login 2");
+        // if (data?.login?.__typename === "LoginResponse") {
+        //   //cache.writeQuery<MeQuery>({
+        //   // cache.writeQuery<any>({
+        //   //   query: MeDocument,
+        //   //   data: {
+        //   //     me: (data.login as LoginResponse).user,
+        //   //   },
+        //   // });
+        // }
       },
     });
     refetch();
@@ -154,12 +165,19 @@ function AuthProvider(props: any) {
     const result = await registerMutation({
       variables: { email, password },
       refetchQueries: [{ query: USERS_QUERY }],
+      update: () => {
+        console.log("ready to update after Register 2");
+      },
     });
     return result.data;
   };
 
   const logout = async () => {
-    const result = await logoutMutation({});
+    const result = await logoutMutation({
+      update: () => {
+        console.log("ready to update after Logout 2");
+      },
+    });
     return result.data;
   };
 
@@ -169,7 +187,7 @@ function AuthProvider(props: any) {
 
   return (
     <AuthContext.Provider
-      value={{ data, login, logout, register }}
+      value={{ data, register, login, logout }}
       {...props}
     />
   );
