@@ -7,54 +7,68 @@ import React, {
 } from "react";
 
 type Alert = {
+  id: string;
   text: string;
   type: string;
   active: boolean;
 };
 
 interface AlertInterface {
-  alert: Alert;
-  setAlert: Dispatch<
-    SetStateAction<{ text: string; type: string; active: boolean }>
-  >;
+  alertList: Alert[];
+  setAlertList: Dispatch<SetStateAction<Alert[]>>;
   sendAlert: (_: string) => void;
   sendError: (_: string) => void;
-  resetAlert: () => void;
+  removeAlert: (_: string) => void;
 }
 
 const initialAlertValue: AlertInterface = {
-  alert: {
-    text: "",
-    type: "success",
-    active: false,
-  },
-  setAlert: () => {},
+  alertList: [],
+  setAlertList: () => {},
   sendAlert: (_: string) => {},
   sendError: (_: string) => {},
-  resetAlert: () => {},
+  removeAlert: (_: string) => {},
 };
 
 export const AlertContext = createContext(initialAlertValue);
 
 export const AlertProvider: React.FC = ({ children }) => {
-  const [alert, setAlert] = useState({
-    text: "",
-    type: "success",
-    active: false,
-  });
-  const resetAlert = () => {
-    setAlert({ text: "", type: "success", active: false });
+  const [alertList, setAlertList] = useState<Alert[]>([]);
+
+  const removeAlert = (id: string) => {
+    setAlertList((prevState) => {
+      return prevState.filter((alert) => {
+        return alert.id !== id;
+      });
+    });
   };
-  const sendAlert = (text: string) => {
-    setAlert({ text, type: "success", active: true });
+
+  const sendAlert = async (text: string) => {
+    setAlertList((prevState) => {
+      const newId = prevState.length
+        ? parseInt(prevState.slice(-1)[0].id) + 1
+        : 1;
+      return [
+        ...prevState,
+        { id: newId.toString(), text, type: "success", active: true },
+      ];
+    });
   };
-  const sendError = (text: string) => {
-    setAlert({ text, type: "error", active: true });
+
+  const sendError = async (text: string) => {
+    setAlertList((prevState) => {
+      const newId = prevState.length
+        ? parseInt(prevState.slice(-1)[0].id) + 1
+        : 1;
+      return [
+        ...prevState,
+        { id: newId.toString(), text, type: "error", active: true },
+      ];
+    });
   };
 
   return (
     <AlertContext.Provider
-      value={{ alert, setAlert, sendAlert, sendError, resetAlert }}
+      value={{ alertList, setAlertList, sendAlert, sendError, removeAlert }}
     >
       {children}
     </AlertContext.Provider>

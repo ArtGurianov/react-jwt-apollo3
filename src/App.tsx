@@ -1,6 +1,6 @@
 import { Router } from "@reach/router";
 import React from "react";
-import Alert from "./components/Alert";
+import AlertList from "./components/AlertList";
 import { useAuth } from "./context/AuthContext";
 import Home from "./pages/Home";
 import { createLazyRoute } from "./utils/createLazyRoute";
@@ -36,7 +36,7 @@ export const App: React.FC = () => {
           <PublicAppRoutes path="/*" />
         )}
       </Router>
-      <Alert />
+      <AlertList />
     </>
   );
 };
